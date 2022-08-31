@@ -27,3 +27,22 @@ Resources:
           Properties:
             Path: /todo/{id}/{username}
             Method: GET
+
+  TodoListReader:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: LearnDynamoDBApp
+      Handler: kryz.handlers.TodoListReader::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: todo
+      Events:
+        ReadTodoList:
+          Type: Api
+          Properties:
+            Path: /todo
+            Method: GET
