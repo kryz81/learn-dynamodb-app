@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "learn-dynamodb-app"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1q7rg55raca6r"
+s3_prefix = "learn-dynamodb-app"
+region = "eu-north-1"
+profile = "kryz81"
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []
