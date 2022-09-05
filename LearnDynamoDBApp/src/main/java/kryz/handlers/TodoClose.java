@@ -9,11 +9,12 @@ import kryz.services.DbService;
 
 import java.util.UUID;
 
-public class TodoReader implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+public class TodoClose implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
     private final DbService dbService = new DbService(System.getenv("TODO_TABLE"));
 
     private final Gson gson = new Gson();
 
+    @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent event, Context context) {
         var response = new APIGatewayProxyResponseEvent();
         String todoId = event.getPathParameters().get("id");
@@ -26,7 +27,8 @@ public class TodoReader implements RequestHandler<APIGatewayProxyRequestEvent, A
                 return response.withStatusCode(404).withBody("Not found");
             }
 
-            return response.withStatusCode(200).withBody(gson.toJson(item));
+            dbService.closeItem(item.get("id").toString(), username);
+            return response.withStatusCode(200).withBody("");
         } catch (IllegalArgumentException e) {
             return response.withStatusCode(400).withBody("Invalid ID");
         }

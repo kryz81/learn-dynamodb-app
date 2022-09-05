@@ -46,3 +46,22 @@ Resources:
           Properties:
             Path: /todo
             Method: GET
+
+  TodoClose:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: LearnDynamoDBApp
+      Handler: kryz.handlers.TodoClose::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: todo
+      Events:
+        CloseTodoItem:
+          Type: Api
+          Properties:
+            Path: /todo/{id}/{username}/close
+            Method: PATCH

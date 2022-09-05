@@ -13,8 +13,10 @@ public class TodoListReader implements RequestHandler<APIGatewayProxyRequestEven
     private final Gson gson = new Gson();
 
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent event, Context context) {
+        var logger = context.getLogger();
         var response = new APIGatewayProxyResponseEvent();
         String age = event.getQueryStringParameters().get("age");
+        logger.log("Hello World, age is: " + age);
         try {
             var items = dbService.filterByAge(age);
             return response.withStatusCode(200).withBody(gson.toJson(items));

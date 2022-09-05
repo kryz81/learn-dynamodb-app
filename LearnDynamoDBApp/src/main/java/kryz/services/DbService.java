@@ -1,10 +1,7 @@
 package kryz.services;
 
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +32,11 @@ public class DbService {
                 .attributesToGet("id", "username", "age", "tags")
                 .build();
 
-        var item = client.getItem(request).item();
+        var res = client.getItem(request);
+        if (!res.hasItem()) {
+            return null;
+        }
+        var item = res.item();
 
         Map<String, Object> result = new HashMap<>();
         result.put("id", item.get("id").s());
@@ -96,5 +97,23 @@ public class DbService {
             record.put("tags", item.get("tags").ss());
             return record;
         }).collect(Collectors.toList());
+    }
+
+    public void closeItem(String id, String username) {
+        UpdateItemRequest request = UpdateItemRequest
+                .builder()
+                .tableName(tableName)
+                .key(Map.of(
+                        "id",
+                        AttributeValue.builder().s(id).build(),
+                        "username",
+                        AttributeValue.builder().s(username).build()
+                ))
+                .updateExpression("set #done = :done")
+                .expressionAttributeNames(Map.of("#done", "done"))
+                .expressionAttributeValues(Map.of(":done", AttributeValue.builder().bool(true).build()))
+                .build();
+
+        client.updateItem(request);
     }
 }
